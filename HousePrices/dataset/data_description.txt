@@ -149,7 +149,7 @@ HouseStyle: Style of dwelling
        SFoyer	Split Foyer
        SLvl	Split Level
 	
-OverallQual: Rates the overall material and finish of the house
+OverallQual: Rates the overall material and finish of the house(房屋整体材料和装修的评价)
 
        10	Very Excellent
        9	Excellent
@@ -175,7 +175,7 @@ OverallCond: Rates the overall condition of the house
        2	Poor
        1	Very Poor
 		
-YearBuilt: Original construction date
+YearBuilt: Original construction date(房屋的修建时间)
 
 YearRemodAdd: Remodel date (same as construction date if no remodeling or additions)
 
@@ -326,7 +326,7 @@ BsmtFinSF2: Type 2 finished square feet
 
 BsmtUnfSF: Unfinished square feet of basement area
 
-TotalBsmtSF: Total square feet of basement area
+TotalBsmtSF: Total square feet of basement area（地下室面积）
 
 Heating: Type of heating
 		
@@ -364,7 +364,7 @@ Electrical: Electrical system
 
 LowQualFinSF: Low quality finished square feet (all floors)
 
-GrLivArea: Above grade (ground) living area square feet
+GrLivArea: Above grade (ground) living area square feet(居住面积)
 
 BsmtFullBath: Basement full bathrooms
 

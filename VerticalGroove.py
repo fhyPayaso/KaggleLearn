@@ -11,9 +11,22 @@ class GrooveData:
     end: int
 
 
-# 横向花纹沟基类
-class VerticalGroove:
+class Groove:
+    def __init__(self):
+        # 0表示纵沟,1表示横沟
+        self.type = 0
+        self.groove_data = []  # 初始化生成的列链码
+        self.render_groove_data = []  # 最终渲染生成的列链码
+        self.bbox = []  # 元素包围框
+
+        self.segmentation = []  # 轮廓像素点
+        self.area = 0  # 花纹面积
+
+
+# 纵向花纹沟基类
+class VerticalGroove(Groove):
     def __init__(self, width, height, center_index):
+        super(VerticalGroove, self).__init__()
         """
         纵向花纹沟基类
         :param width: 花纹沟宽度
@@ -22,12 +35,7 @@ class VerticalGroove:
         """
         self.width = width
         self.height = height
-        self.groove_data = []
-        self.render_groove_data = []
         self.center_index = center_index
-        self.bbox = []  # 元素包围框
-        self.segmentation = []  # 轮廓像素点
-        self.area = 0  # 花纹面积
         self.type = 0
 
     def get_groove_data(self):
@@ -102,10 +110,19 @@ class VerticalPolylineGroove(VerticalGroove):
         self.angle = angle * 3.1415 / 180
         self.segment_length = segment_length
         self.type = 2
+        self.fix_center_init_index()
         self.center_index_list = []
         self.build_guide_line()
         self.build_groove_data()
         self.build_bbox()
+
+    def fix_center_init_index(self):
+        """
+        修正初始化的中间点
+        :return:
+        """
+        all_width = self.width + tan(self.angle) * self.segment_length
+        self.center_index = self.center_index - all_width / 2 + self.width / 2
 
     def build_guide_line(self):
         cur_height = 0
@@ -156,12 +173,11 @@ class VerticalWavylineGroove(VerticalGroove):
         while cur_height < self.height:
             end_height = cur_height + self.segment_length
             # 生成单个片段
-            cur_center_index = self.center_index_list[-1][1]
             for h in range(cur_height, end_height):
                 # 将距离映射到一个周期内
                 theta = 2 * 3.14 * (h - cur_height) / self.segment_length
                 diff = self.omega * sin(theta)  # 正弦函数变化
-                self.center_index_list.append([h, cur_center_index + diff])
+                self.center_index_list.append([h, self.center_index + diff])
             cur_height = end_height
 
     def build_groove_data(self):

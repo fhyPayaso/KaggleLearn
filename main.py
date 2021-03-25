@@ -9,21 +9,19 @@ from CocoEncoder import *
 def datesets_builder(image_num, image_path, json_path):
     image_list = []
     for i in range(image_num):
-        image = TyreImage(i + 1)
-        image.init_empty_image(800)
-        image.build_pattern_list(30)
-        image.render()
+        image = TyreImage(i + 1, 800)
+        image.render_bbox()
         image.save(image_path)
         image_list.append(image)
     encoder = CocoEncoder()
-    label_list = ['StraightLine', 'Polyline', 'Wavyline']
+    label_list = ['StraightLine', 'Polyline', 'Wavyline', 'HorizontalLine']
     encoder.parse_image_list(image_list, label_list)
     encoder.save_json(json_path)
 
 
 if __name__ == '__main__':
-    train_num = 2
-    val_num = 1
+    train_num = 20
+    val_num = 10
 
     train_image_path = "./datasets/coco/train"
     train_json_path = "./datasets/coco/annotations/pattern_train.json"
@@ -33,21 +31,6 @@ if __name__ == '__main__':
 
     datesets_builder(train_num, train_image_path, train_json_path)
     datesets_builder(val_num, val_image_path, val_json_path)
-
-    # image_num = 1
-    # image_list = []
-    # for i in range(image_num):
-    #     image = TyreImage(i + 1)
-    #     image.init_empty_image(800)
-    #     image.build_pattern_list(30)
-    #     image.render()
-    #     image.save("./dataout")
-    #     image_list.append(image)
-    # # 保存成json
-    # encoder = CocoEncoder()
-    # label_list = ['StraightLine', 'Polyline', 'Wavyline']
-    # encoder.parse_image_list(image_list, label_list)
-    # encoder.save_json('./test.json')
 
 # if __name__ == '__main__':
 #     img = cv2.imread('./data/data2.jpeg', 0)

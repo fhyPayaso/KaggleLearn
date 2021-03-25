@@ -74,8 +74,7 @@ class VerticalGroove(Groove):
         while i > head_row.start:
             left_points.append([head_row.index, i])
             i -= 1
-        self.segmentation = np.array(left_points).flatten()
-
+        self.segmentation.append(np.array(left_points).flatten())
 
 # 直线类型纵沟
 class VerticalStraightLineGroove(VerticalGroove):

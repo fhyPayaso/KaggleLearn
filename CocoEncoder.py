@@ -1,8 +1,6 @@
 import argparse
 import json
 import matplotlib.pyplot as plt
-import skimage.io as io
-# import cv2
 import numpy as np
 import glob
 import PIL.Image

@@ -34,25 +34,26 @@ class HorizontalGroove(Groove):
         bot_points = []
         for data in self.render_groove_data:
             self.area += abs(data.end - data.start)
-            top_points.append([data.start, data.index])
-            bot_points.append([data.end, data.index])
+            if data.index % 5 == 0:  # 避免过度密集
+                top_points.append([data.start, data.index])
+                bot_points.append([data.end, data.index])
         start_col = self.groove_data[0]
         end_col = self.groove_data[-1]
         # 上边界
         top_points.reverse()
-        # 左边界
-        i = start_col.start
-        while i < start_col.end:
-            top_points.append([i, start_col.index])
-            i += 1
+        # # 左边界
+        # i = start_col.start
+        # while i < start_col.end:
+        #     top_points.append([i, start_col.index])
+        #     i += 1
         # 下边界
         top_points.extend(bot_points)
         # 右边界
-        i = end_col.end
-        while i > end_col.start:
-            top_points.append([i, end_col.index])
-            i -= 1
-        self.segmentation = np.array(top_points).flatten()
+        # i = end_col.end
+        # while i > end_col.start:
+        #     top_points.append([i, end_col.index])
+        #     i -= 1
+        self.segmentation.append(np.array(top_points).flatten())
 
 
 class HorizontalStraightLineGroove(HorizontalGroove):

@@ -155,7 +155,7 @@ class TyreImage:
 
             # 在start~end范围内构建横沟
             all_range = end_index - start_index
-            p_width = np.random.randint(10, int(all_range * 0.8))
+            p_width = np.random.randint(10, max(15, int(all_range * 0.8)))
             p_height = np.random.randint(10, 30)
             p_margin = np.random.randint(50, 100)
             # 处理角度(横沟和斜沟各一半)
@@ -221,6 +221,24 @@ class TyreImage:
             for x in range(x_start, x_end):
                 self.image[y_start, x] = 128
                 self.image[y_end, x] = 128
+
+    def render_segmentation(self):
+        """
+        渲染轮廓点
+        :return:
+        """
+        for groove in self.render_pattern_list:
+            segment = groove.segmentation[0]
+            all_points_num = len(segment)
+            print("all_points_num:", all_points_num)
+            for index in range(all_points_num):
+                if index >= all_points_num - 1:
+                    continue
+                # print(segment[index], segment[index + 1])
+                if index % 2 == 0:
+                    x = min(int(segment[index]), IMAGE_SIZE - 1)
+                    y = min(int(segment[index + 1]), IMAGE_SIZE - 1)
+                    self.image[x, y] = 128
 
     def save(self, path):
         cv2.imwrite("{}/{}".format(path, self.file_name), self.image, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])

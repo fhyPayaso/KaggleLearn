@@ -56,25 +56,27 @@ class VerticalGroove(Groove):
             if data.index < 0 or data.index >= self.height:
                 continue
             self.area += abs(data.end - data.start)
-            left_points.append([data.index, data.start])
-            right_points.append([data.index, data.end])
+            if data.index % 10 == 0:  # 每10个点取一次，避免过密
+                left_points.append([data.index, data.start])
+                right_points.append([data.index, data.end])
         head_row = self.render_groove_data[0]
         end_row = self.render_groove_data[-1]
-        # 下边界
-        i = end_row.start
-        while i < end_row.end:
-            left_points.append([end_row.index, i])
-            i += 1
+        # # 下边界
+        # i = end_row.start
+        # while i < end_row.end:
+        #     left_points.append([end_row.index, i])
+        #     i += 1
 
         # 右边界
         right_points.reverse()
         left_points.extend(right_points)
-        # 上边界
-        i = head_row.end
-        while i > head_row.start:
-            left_points.append([head_row.index, i])
-            i -= 1
+        # # 上边界
+        # i = head_row.end
+        # while i > head_row.start:
+        #     left_points.append([head_row.index, i])
+        #     i -= 1
         self.segmentation.append(np.array(left_points).flatten())
+
 
 # 直线类型纵沟
 class VerticalStraightLineGroove(VerticalGroove):

@@ -10,7 +10,8 @@ def datesets_builder(image_num, image_path, json_path):
     image_list = []
     for i in range(image_num):
         image = TyreImage(i + 1, 800)
-        image.render_bbox()
+        # image.render_bbox()
+        image.render_segmentation()
         image.save(image_path)
         image_list.append(image)
     encoder = CocoEncoder()

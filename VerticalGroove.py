@@ -35,6 +35,7 @@ class VerticalGroove(Groove):
         """
         self.width = width
         self.height = height
+        self.end_height = 0
         self.center_index = center_index
         self.type = 0
 
@@ -47,7 +48,7 @@ class VerticalGroove(Groove):
         for groove in self.groove_data:
             l = min(l, groove.start)
             r = max(r, groove.end)
-        self.bbox = [l, 0, r - l, self.height]
+        self.bbox = [l, 10, r - l, self.end_height - 10]
 
     def build_segmentation(self):
         left_points = []
@@ -56,26 +57,29 @@ class VerticalGroove(Groove):
             if data.index < 0 or data.index >= self.height:
                 continue
             self.area += abs(data.end - data.start)
-            if data.index % 10 == 0:  # 每10个点取一次，避免过密
-                left_points.append([data.index, data.start])
-                right_points.append([data.index, data.end])
-        head_row = self.render_groove_data[0]
-        end_row = self.render_groove_data[-1]
-        # # 下边界
-        # i = end_row.start
-        # while i < end_row.end:
-        #     left_points.append([end_row.index, i])
-        #     i += 1
+            # if data.index % 20 == 0:  # 每10个点取一次，避免过密
+            left_points.append([data.index, data.start])
+            right_points.append([data.index, data.end])
+            print(data.index)
 
-        # 右边界
-        right_points.reverse()
-        left_points.extend(right_points)
-        # # 上边界
-        # i = head_row.end
-        # while i > head_row.start:
-        #     left_points.append([head_row.index, i])
-        #     i -= 1
-        self.segmentation.append(np.array(left_points).flatten())
+        seg = []
+        # top
+        for col in range(int(self.render_groove_data[0].start), int(self.render_groove_data[0].end)):
+            # print()
+            seg.append([self.render_groove_data[0].index, col])
+        # right
+        seg.extend(right_points)
+        # bottom
+        for col in range(int(self.render_groove_data[-1].end), int(self.render_groove_data[-1].start), -1):
+            seg.append([self.render_groove_data[-1].index, col])
+        # left
+        left_points.reverse()
+        seg.extend(left_points)
+
+        new_seg = []
+        for pix in seg:
+            new_seg.append([int(pix[1]), int(pix[0])])
+        self.segmentation.append(np.array(new_seg).flatten())
 
 
 # 直线类型纵沟
@@ -89,7 +93,8 @@ class VerticalStraightLineGroove(VerticalGroove):
 
     def build_groove_data(self):
         # 对于每个高度生成一个行链码
-        for h in range(self.height):
+        self.end_height = self.height - 10
+        for h in range(10, self.end_height):
             data = GrooveData(True, h,
                               self.center_index - self.width / 2,
                               self.center_index + self.width / 2)
@@ -126,11 +131,14 @@ class VerticalPolylineGroove(VerticalGroove):
         self.center_index = self.center_index - all_width / 2 + self.width / 2
 
     def build_guide_line(self):
-        cur_height = 0
+        cur_height = 10
         dir = 0  # 当前折线方向
         self.center_index_list.append([cur_height, self.center_index])
-        while cur_height < self.height:
+        while cur_height < self.height - 10:
             end_height = cur_height + self.segment_length
+            if end_height > self.height:
+                self.end_height = cur_height
+                break
             # 生成单个片段
             cur_center_index = self.center_index_list[-1][1]
             for h in range(cur_height, end_height):
@@ -169,10 +177,13 @@ class VerticalWavylineGroove(VerticalGroove):
         self.build_bbox()
 
     def build_guide_line(self):
-        cur_height = 0
+        cur_height = 10
         self.center_index_list.append([cur_height, self.center_index])
-        while cur_height < self.height:
+        while cur_height < self.height - 10:
             end_height = cur_height + self.segment_length
+            if end_height > self.height:
+                self.end_height = cur_height
+                break
             # 生成单个片段
             for h in range(cur_height, end_height):
                 # 将距离映射到一个周期内

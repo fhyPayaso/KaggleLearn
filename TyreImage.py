@@ -3,7 +3,7 @@ import cv2
 from VerticalGroove import *
 from HorizontalGroove import *
 
-IMAGE_SIZE = 1000
+IMAGE_SIZE = 512
 
 
 class TyreImage:
@@ -41,11 +41,11 @@ class TyreImage:
         """
         self.image_start = int(self.width / 2 - self.center_size / 2)
         self.image_end = int(self.width / 2 + self.center_size / 2)
-        for w in range(self.width):
-            if self.image_start <= w <= self.image_end:
-                continue
-            for h in range(self.height):
-                self.image[h, w] = 255
+        # for w in range(self.width):
+        #     if self.image_start <= w <= self.image_end:
+        #         continue
+        #     for h in range(self.height):
+        #         self.image[h, w] = 255
 
     def __build_vertical_pattern_list(self):
         """
@@ -56,20 +56,21 @@ class TyreImage:
         :return:
         """
         image_center = (self.image_start + self.image_end) / 2
-        pattern_num = np.random.randint(3, 7)
-        margin = np.random.randint(80, 100)
+        pattern_num = 1
+        pattern_num = np.random.randint(1, 5)
+        margin = np.random.randint(20, 30)
         center_diff = margin  # 当前与轮胎中心的距离
         # 若为单数,先生成中间的(中间花纹宽度不能过大)
         if pattern_num % 2 == 1:  # 单数类型
-            pattern_num -= 1
-            pattern_width = np.random.randint(10, 30)
+            # pattern_num -= 1
+            pattern_width = np.random.randint(80, 90)
             groove = self.__gen_vertical_pattern_pair(pattern_width, image_center)
             center_diff += groove[0].bbox[2] / 2
             self.pattern_list.extend(groove)
         pattern_num /= 2
         # 从中间向两侧对称生成
         for i in range(0, int(pattern_num)):
-            pattern_width = np.random.randint(20, 40)
+            pattern_width = np.random.randint(80, 90)
             groove = self.__gen_vertical_pattern_pair(pattern_width, image_center, center_diff, 2)
             center_diff += (margin + groove[0].bbox[2])
             self.pattern_list.extend(groove)
@@ -89,8 +90,9 @@ class TyreImage:
         segment_length = int(self.height / np.random.randint(5, 20))
         # 随机生成纵沟种类
         groove_type = np.random.randint(1, 4)
+        # groove_type = 1
         # 随机生成角度
-        angle = np.random.randint(10, 30)
+        angle = np.random.randint(10, 20)
         # 随机生成振幅
         omega = np.random.randint(2, 10)
         pattern_pair = []
@@ -213,14 +215,15 @@ class TyreImage:
             y_start = int(bbox[1])
             y_end = int(bbox[1] + bbox[3])
             y_end = min(y_end, IMAGE_SIZE - 1)
+            color = 128
             # 左右边界
             for y in range(y_start, y_end):
-                self.image[y, x_start] = 128
-                self.image[y, x_end] = 128
+                self.image[y, x_start] = color
+                self.image[y, x_end] = color
             # 上下边界
             for x in range(x_start, x_end):
-                self.image[y_start, x] = 128
-                self.image[y_end, x] = 128
+                self.image[y_start, x] = color
+                self.image[y_end, x] = color
 
     def render_segmentation(self):
         """
@@ -238,7 +241,7 @@ class TyreImage:
                 if index % 2 == 0:
                     x = min(int(segment[index]), IMAGE_SIZE - 1)
                     y = min(int(segment[index + 1]), IMAGE_SIZE - 1)
-                    self.image[x, y] = 128
+                    self.image[y, x] = 128
 
     def save(self, path):
         cv2.imwrite("{}/{}".format(path, self.file_name), self.image, [int(cv2.IMWRITE_PNG_COMPRESSION), 0])

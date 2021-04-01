@@ -60,12 +60,11 @@ class VerticalGroove(Groove):
             # if data.index % 20 == 0:  # 每10个点取一次，避免过密
             left_points.append([data.index, data.start])
             right_points.append([data.index, data.end])
-            print(data.index)
+            # print(data.index)
 
         seg = []
         # top
         for col in range(int(self.render_groove_data[0].start), int(self.render_groove_data[0].end)):
-            # print()
             seg.append([self.render_groove_data[0].index, col])
         # right
         seg.extend(right_points)

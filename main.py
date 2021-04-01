@@ -25,12 +25,6 @@ if __name__ == '__main__':
     train_num = 50
     val_num = 10
 
-    # train_image_path = "./datasets/coco/train"
-    # train_json_path = "./datasets/coco/annotations/pattern_train.json"
-    #
-    # val_image_path = "./datasets/coco/val"
-    # val_json_path = "./datasets/coco/annotations/pattern_val.json"
-
     # train_image_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/train"
     # train_json_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/annotations/pattern_train.json"
     #
@@ -38,6 +32,7 @@ if __name__ == '__main__':
     # val_json_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/annotations/pattern_val.json"
 
     base_path = "/home/cglab/workspace/AdelaiDet/datasets/coco/{}"
+    # base_path = "./datasets/coco/{}"
 
     train_image_path = base_path.format("train2017")
     train_json_path = base_path.format("annotations/instances_train2017.json")

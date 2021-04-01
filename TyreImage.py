@@ -39,8 +39,10 @@ class TyreImage:
         :param center_size: 轮胎部分宽度
         :return:
         """
-        self.image_start = int(self.width / 2 - self.center_size / 2)
-        self.image_end = int(self.width / 2 + self.center_size / 2)
+        self.image_start = 10
+        self.image_end = self.width - 10
+        # self.image_start = int(self.width / 2 - self.center_size / 2)
+        # self.image_end = int(self.width / 2 + self.center_size / 2)
         # for w in range(self.width):
         #     if self.image_start <= w <= self.image_end:
         #         continue
@@ -155,21 +157,36 @@ class TyreImage:
                 end_index = self.image_end
                 next_start = self.image_end
 
+            # print(start_index, end_index)
+
             # 在start~end范围内构建横沟
             all_range = end_index - start_index
-            p_width = np.random.randint(10, max(15, int(all_range * 0.8)))
+            if all_range < 50:
+                start_index = next_start
+                continue
+
+            p_width = np.random.randint(40, int(all_range))
             p_height = np.random.randint(10, 30)
             p_margin = np.random.randint(50, 100)
             # 处理角度(横沟和斜沟各一半)
-            angle_type = np.random.randint(0, 2)
+            angle_type = np.random.randint(0, 3)
             p_angle = 0
-            if angle_type == 1:
-                p_angle = np.random.randint(-30, 30)
+            if angle_type == 1 or angle_type == 2:
+                p_angle = np.random.randint(0, 30)
 
             groove_group = HorizontalGrooveGroup(
                 p_height, p_width, p_margin, p_angle)
             groove_group.build_groove_group(start_index, end_index)
             self.horizontal_group_list.append(groove_group)
+
+            # ---------------------------------------------------- #
+
+            p_height = np.random.randint(10, 15)
+            p_angle = np.random.randint(-60, -20)
+            groove_blade_group = HorizontalGrooveGroup(
+                p_height, p_width, p_margin, p_angle)
+            groove_blade_group.build_groove_group(start_index, end_index)
+            self.horizontal_group_list.append(groove_blade_group)
 
             start_index = next_start
         self.__render_horizontal_pattern()
@@ -233,7 +250,7 @@ class TyreImage:
         for groove in self.render_pattern_list:
             segment = groove.segmentation[0]
             all_points_num = len(segment)
-            print("all_points_num:", all_points_num)
+            # print("all_points_num:", all_points_num)
             for index in range(all_points_num):
                 if index >= all_points_num - 1:
                     continue

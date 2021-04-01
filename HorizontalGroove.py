@@ -75,6 +75,21 @@ class HorizontalStraightLineGroove(HorizontalGroove):
             self.groove_data.append(data)
             cur_h = self.start_index + tan(self.angle) * (w - self.start)
 
+class HorizontalBladeGroove(HorizontalGroove):
+    def __init__(self, height, start_index, angle, margin, start, end):
+        super().__init__(height, start_index, angle, margin, start, end)
+        self.type = 4
+
+    def build_none_link(self):
+        # 由左向右构建多个列链码
+        cur_h = self.start_index
+        for w in range(self.start, self.end):
+            data = GrooveData(False, w,
+                              cur_h - self.height / 2,
+                              cur_h + self.height / 2)
+            self.groove_data.append(data)
+            cur_h = self.start_index + tan(self.angle) * (w - self.start)
+
 
 # 从上至下的一组花纹
 class HorizontalGrooveGroup:

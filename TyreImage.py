@@ -58,21 +58,21 @@ class TyreImage:
         :return:
         """
         image_center = (self.image_start + self.image_end) / 2
-        pattern_num = 1
+        # pattern_num = 1
         pattern_num = np.random.randint(1, 5)
-        margin = np.random.randint(20, 30)
+        margin = np.random.randint(30, 50)
         center_diff = margin  # 当前与轮胎中心的距离
         # 若为单数,先生成中间的(中间花纹宽度不能过大)
         if pattern_num % 2 == 1:  # 单数类型
             # pattern_num -= 1
-            pattern_width = np.random.randint(80, 90)
+            pattern_width = np.random.randint(20, 40)
             groove = self.__gen_vertical_pattern_pair(pattern_width, image_center)
             center_diff += groove[0].bbox[2] / 2
             self.pattern_list.extend(groove)
         pattern_num /= 2
         # 从中间向两侧对称生成
         for i in range(0, int(pattern_num)):
-            pattern_width = np.random.randint(80, 90)
+            pattern_width = np.random.randint(40, 60)
             groove = self.__gen_vertical_pattern_pair(pattern_width, image_center, center_diff, 2)
             center_diff += (margin + groove[0].bbox[2])
             self.pattern_list.extend(groove)
@@ -137,6 +137,8 @@ class TyreImage:
                 # self.image[data.index, int(data.start)] = 255
                 # self.image[data.index, int(data.end)] = 255
                 groove.render_groove_data.append(data)
+
+            groove.build_bbox()
             groove.build_segmentation()
             self.render_pattern_list.append(groove)
 
@@ -151,43 +153,31 @@ class TyreImage:
         for i in range(v_groove_num + 1):
             if i < v_groove_num:
                 groove = self.render_pattern_list[i]
-                end_index = groove.bbox[0]
-                next_start = groove.bbox[0] + groove.bbox[2]
+                end_index = groove.bbox[0] + groove.bbox[2] / 2
+                next_start = groove.bbox[0] + groove.bbox[2] / 2
             else:
                 end_index = self.image_end
                 next_start = self.image_end
 
             # print(start_index, end_index)
-
             # 在start~end范围内构建横沟
             all_range = end_index - start_index
             if all_range < 50:
                 start_index = next_start
                 continue
 
-            p_width = np.random.randint(40, int(all_range))
-            p_height = np.random.randint(10, 30)
-            p_margin = np.random.randint(50, 100)
-            # 处理角度(横沟和斜沟各一半)
-            angle_type = np.random.randint(0, 3)
-            p_angle = 0
-            if angle_type == 1 or angle_type == 2:
-                p_angle = np.random.randint(0, 30)
-
-            groove_group = HorizontalGrooveGroup(
-                p_height, p_width, p_margin, p_angle)
-            groove_group.build_groove_group(start_index, end_index)
-            self.horizontal_group_list.append(groove_group)
-
-            # ---------------------------------------------------- #
-
-            p_height = np.random.randint(10, 15)
-            p_angle = np.random.randint(-60, -20)
-            groove_blade_group = HorizontalGrooveGroup(
-                p_height, p_width, p_margin, p_angle)
-            groove_blade_group.build_groove_group(start_index, end_index)
-            self.horizontal_group_list.append(groove_blade_group)
-
+            # 在两个纵沟之间有多少个种类的横沟(1,2)
+            type_num = np.random.randint(1, 3)
+            # 斜直线沟倾斜角度的方向
+            for cur_type in range(type_num):
+                # 随机横沟种类之一
+                h_groove_type = np.random.randint(4, 7)
+                # h_groove_type = 6
+                # 随机数据类
+                random_data = RandomData(range_left_col=30, range_right_col=int(all_range))
+                groove_group = HorizontalGrooveGroup(start_index, end_index,
+                                                     h_groove_type, random_data)
+                self.horizontal_group_list.append(groove_group)
             start_index = next_start
         self.__render_horizontal_pattern()
 
@@ -203,7 +193,7 @@ class TyreImage:
                 continue
             for groove in group.groove_group:
                 # 花纹过滤
-                if groove.bbox[1] < 0 or groove.bbox[3] >= IMAGE_SIZE:
+                if groove.bbox[1] < 0 or groove.bbox[1] + groove.bbox[3] >= IMAGE_SIZE:
                     continue
                 for data in groove.groove_data:
                     # # 列链码过滤
@@ -215,6 +205,7 @@ class TyreImage:
                         self.image[h, data.index] = 255
                     groove.render_groove_data.append(data)
 
+                groove.build_bbox(True)
                 groove.build_segmentation()
                 self.render_pattern_list.append(groove)
             render_group_list.append(group)

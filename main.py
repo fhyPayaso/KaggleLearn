@@ -15,14 +15,15 @@ def datesets_builder(image_num, image_path, json_path):
         image.save(image_path)
         image_list.append(image)
     encoder = CocoEncoder()
-    label_list = ['StraightLine', 'Polyline', 'Wavyline', 'HorizontalLine']
+    label_list = ['StraightLine', 'Polyline', 'Wavyline',
+                  'HorizontalStraightLine', 'HorizontalLeadLine', 'HorizontalArcLine']
     # label_list = ['StraightLine', 'Polyline', 'Wavyline']
     encoder.parse_image_list(image_list, label_list)
     encoder.save_json(json_path)
 
 
 if __name__ == '__main__':
-    train_num = 50
+    train_num = 10
     val_num = 10
 
     # train_image_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/train"
@@ -31,8 +32,8 @@ if __name__ == '__main__':
     # val_image_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/val"
     # val_json_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/annotations/pattern_val.json"
 
-    base_path = "/home/cglab/workspace/AdelaiDet/datasets/coco/{}"
-    # base_path = "./datasets/coco/{}"
+    # base_path = "/home/cglab/workspace/AdelaiDet/datasets/coco/{}"
+    base_path = "./datasets/zong/{}"
 
     train_image_path = base_path.format("train2017")
     train_json_path = base_path.format("annotations/instances_train2017.json")
@@ -42,8 +43,6 @@ if __name__ == '__main__':
 
     datesets_builder(train_num, train_image_path, train_json_path)
     datesets_builder(val_num, val_image_path, val_json_path)
-
-
 
 # if __name__ == '__main__':
 #     img = cv2.imread('./data/data2.jpeg', 0)

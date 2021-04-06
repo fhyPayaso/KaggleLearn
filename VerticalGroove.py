@@ -42,10 +42,14 @@ class VerticalGroove(Groove):
     def get_groove_data(self):
         return self.groove_data
 
-    def build_bbox(self):
+    def build_bbox(self, is_render=False):
         l = np.iinfo(np.int).max
         r = np.iinfo(np.int).min
-        for groove in self.groove_data:
+        link_marks = self.groove_data
+        if is_render:
+            link_marks = self.render_groove_data
+
+        for groove in link_marks:
             l = min(l, groove.start)
             r = max(r, groove.end)
         self.bbox = [l, 10, r - l, self.end_height - 10]

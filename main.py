@@ -32,8 +32,8 @@ if __name__ == '__main__':
     # val_image_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/val"
     # val_json_path = "../maskrcnn/maskrcnn-benchmark/datasets/coco/annotations/pattern_val.json"
 
-    # base_path = "/home/cglab/workspace/AdelaiDet/datasets/coco/{}"
-    base_path = "./datasets/zong/{}"
+    base_path = "/home/cglab/workspace/AdelaiDet/datasets/coco/{}"
+    # base_path = "./datasets/zong/{}"
 
     train_image_path = base_path.format("train2017")
     train_json_path = base_path.format("annotations/instances_train2017.json")
